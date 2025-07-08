@@ -5,10 +5,4 @@ __pycache__
 db.sqlite3
 media
 staticfiles
-.venv\desktop.ini
-agrocomm\agrocomm\desktop.ini
-.venv\desktop.ini
-agrocomm\store\utils\desktop.ini
-agrocomm\store\desktop.ini
-agrocomm\desktop.ini
-desktop.ini
+*.desktop.ini
