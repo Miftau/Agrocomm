@@ -2,3 +2,4 @@ Django
 gunicorn
 python-decouple
 requests
+whitenoise
