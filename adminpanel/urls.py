@@ -7,8 +7,8 @@ urlpatterns = [
     path('', views.dashboard, name='admin_dashboard'),
 
     # Authentication
-    path('login/', auth_views.LoginView.as_view(template_name='adminpanel/login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('login/', views.admin_login, name='admin_login'),
+    path('logout/', views.admin_logout, name='admin_logout'),
 
     # Farmer views
     path('farmers/', views.farmer_list, name='farmer_list'),
