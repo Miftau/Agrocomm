@@ -9,8 +9,14 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+from decouple import config
 from pathlib import Path
+import dj_database_url
+import os
+
+from django.conf.global_settings import DATABASES
+
+DATABASES['default'] = dj_database_url.config(default=config('DATABASE_URL'))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -116,13 +122,17 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+# Static Files (for Render)
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-PAYSTACK_SECRET_KEY = "sk_test_xxx..."  # Replace with your real secret key
-PAYSTACK_PUBLIC_KEY = "pk_test_xxx..."
-YOUR_DOMAIN = "https://yourdomain.com"  # For redirect or webhook if needed
+AFRICASTALKING_USERNAME = config("AFRICASTALKING_USERNAME")
+AFRICASTALKING_API_KEY = config("AFRICASTALKING_API_KEY")
+
+PAYSTACK_SECRET_KEY = config("PAYSTACK_SECRET_KEY")
+PAYSTACK_PUBLIC_KEY = config("PAYSTACK_PUBLIC_KEY")

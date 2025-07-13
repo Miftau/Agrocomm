@@ -3,3 +3,4 @@ gunicorn
 python-decouple
 requests
 whitenoise
+dj-database-url

@@ -239,4 +239,16 @@ def paystack_webhook(request):
             pass
     return HttpResponse(status=200)
 
+@csrf_exempt
+def sms_delivery_report(request):
+    if request.method == 'POST':
+        phone_number = request.POST.get("phoneNumber")
+        status = request.POST.get("status")
+        message_id = request.POST.get("messageId")
+        cost = request.POST.get("cost")
+
+        print(f"SMS to {phone_number} - Status: {status} - Cost: {cost}")
+        # Optionally save status in DB
+        return HttpResponse("OK")
+    return HttpResponse("Invalid Method")
 

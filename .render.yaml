@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: agrocomm
+    env: python
+    buildCommand: "./manage.py collectstatic --noinput"
+    startCommand: "gunicorn Agrocomm.wsgi"
+    envVars:
+      - key: DEBUG
+        value: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: AFRICASTALKING_USERNAME
+        value: sandbox
+      - key: AFRICASTALKING_API_KEY
+        value: your_africastalking_key
+      - key: PAYSTACK_SECRET_KEY
+        value: your_paystack_key
+      - key: PAYSTACK_PUBLIC_KEY
+        value: your_paystack_pub_key
+      - key: DATABASE_URL
+        fromDatabase:
+          name: agrocomm-db
+          property: connectionString
+databases:
+  - name: agrocomm-db
