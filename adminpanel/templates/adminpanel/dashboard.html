@@ -1,6 +1,33 @@
 {% extends "adminpanel/base.html" %}
 {% block content %}
-<h2>📊 Admin Dashboard</h2>
+<h2>📊 Dashboard – {{ range|title }} Summary</h2>
+
+<div class="row">
+  <div class="col-md-3">
+    <div class="card border-success mb-3">
+      <div class="card-body">
+        <h5 class="card-title">🆕 New Farmers</h5>
+        <p class="h3">{{ new_farmers }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card border-primary mb-3">
+      <div class="card-body">
+        <h5 class="card-title">🆕 New Products</h5>
+        <p class="h3">{{ new_products }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card border-info mb-3">
+      <div class="card-body">
+        <h5 class="card-title">🆕 New Orders</h5>
+        <p class="h3">{{ new_orders }}</p>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="row mt-4">
   <div class="col-md-3">

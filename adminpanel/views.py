@@ -5,7 +5,9 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 import csv
-
+from django.utils import timezone
+from datetime import timedelta
+from django.db.models import Count, Sum, Q
 from store.models import Farmer, Product, Order
 
 
@@ -14,47 +16,57 @@ from store.models import Farmer, Product, Order
 # =============================
 @login_required
 def dashboard(request):
-    context = {
-        "total_farmers": Farmer.objects.count(),
-        "pending_farmers": Farmer.objects.filter(is_approved=False).count(),
-        "approved_farmers": Farmer.objects.filter(is_approved=True).count(),
+    range = request.GET.get("range", "day")
+    now = timezone.now()
 
-        "total_products": Product.objects.count(),
-        "pending_products": Product.objects.filter(is_approved=False).count(),
-        "approved_products": Product.objects.filter(is_approved=True).count(),
-        "out_of_stock": Product.objects.filter(stock=0).count(),
+    if range == "week":
+        since = now - timedelta(days=7)
+    elif range == "month":
+        since = now - timedelta(days=30)
+    else:  # day
+        since = now.replace(hour=0, minute=0, second=0, microsecond=0)
 
-        "total_orders": Order.objects.count(),
-        "pending_orders": Order.objects.filter(status="Pending").count(),
-        "delivered_orders": Order.objects.filter(status="Delivered").count(),
-        "cancelled_orders": Order.objects.filter(status="Cancelled").count(),
+    # KPIs
+    approved_farmers = Farmer.objects.filter(is_approved=True).count()
+    pending_farmers = Farmer.objects.filter(is_approved=False).count()
+    total_orders = Order.objects.count()
+    out_of_stock = Product.objects.filter(stock__lte=0).count()
 
-        "paid_orders": Order.objects.filter(payment_method="Paystack").count(),
-        "pay_on_delivery": Order.objects.filter(payment_method="Pay on Delivery").count(),
+    new_farmers = Farmer.objects.filter(created_at__gte=since).count()
+    new_orders = Order.objects.filter(created_at__gte=since).count()
+    new_products = Product.objects.filter(created_at__gte=since).count()
 
-        "chart_data": {
-            "farmers": [
-                Farmer.objects.filter(is_approved=True).count(),
-                Farmer.objects.filter(is_approved=False).count()
-            ],
-            "products": [
-                Product.objects.filter(is_approved=True).count(),
-                Product.objects.filter(is_approved=False).count(),
-                Product.objects.filter(stock=0).count()
-            ],
-            "orders": [
-                Order.objects.filter(status="Pending").count(),
-                Order.objects.filter(status="Delivered").count(),
-                Order.objects.filter(status="Cancelled").count()
-            ],
-            "payments": [
-                Order.objects.filter(payment_method="Paystack").count(),
-                Order.objects.filter(payment_method="Bank Transfer").count(),
-                Order.objects.filter(payment_method="Pay on Delivery").count()
-            ]
-        }
+    # Growth calculations (you can later add % change comparison if needed)
+    chart_data = {
+        "farmers": [approved_farmers, pending_farmers],
+        "products": [
+            Product.objects.filter(is_approved=True).count(),
+            Product.objects.filter(is_approved=False).count(),
+            out_of_stock,
+        ],
+        "orders": [
+            Order.objects.filter(status="Pending").count(),
+            Order.objects.filter(status="Delivered").count(),
+            Order.objects.filter(status="Cancelled").count(),
+        ],
+        "payments": [
+            Order.objects.filter(payment_method="Paystack").count(),
+            Order.objects.filter(payment_method="Bank Transfer").count(),
+            Order.objects.filter(payment_method="Pay on Delivery").count(),
+        ],
     }
-    return render(request, "adminpanel/dashboard.html", context)
+
+    return render(request, "adminpanel/dashboard.html", {
+        "range": range,
+        "approved_farmers": approved_farmers,
+        "pending_farmers": pending_farmers,
+        "total_orders": total_orders,
+        "out_of_stock": out_of_stock,
+        "new_farmers": new_farmers,
+        "new_orders": new_orders,
+        "new_products": new_products,
+        "chart_data": chart_data,
+    })
 
 
 # =============================
