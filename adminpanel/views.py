@@ -11,32 +11,46 @@ from django.db.models import Count, Sum, Q
 from store.models import Farmer, Product, Order
 
 
+def get_range_bounds(ranges):
+    now = timezone.now()
+    if ranges == "week":
+        current_start = now - timedelta(days=7)
+        previous_start = current_start - timedelta(days=7)
+    elif ranges == "month":
+        current_start = now - timedelta(days=30)
+        previous_start = current_start - timedelta(days=30)
+    else:
+        current_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        previous_start = current_start - timedelta(days=1)
+    return current_start, previous_start
+
 # =============================
 # ADMIN DASHBOARD OVERVIEW
 # =============================
 @login_required
 def dashboard(request):
-    range = request.GET.get("range", "day")
-    now = timezone.now()
+    ranges = request.GET.get("range", "day")
+    current_start, previous_start = get_range_bounds(ranges)
 
-    if range == "week":
-        since = now - timedelta(days=7)
-    elif range == "month":
-        since = now - timedelta(days=30)
-    else:  # day
-        since = now.replace(hour=0, minute=0, second=0, microsecond=0)
-
-    # KPIs
+    # KPI counters
     approved_farmers = Farmer.objects.filter(is_approved=True).count()
     pending_farmers = Farmer.objects.filter(is_approved=False).count()
     total_orders = Order.objects.count()
     out_of_stock = Product.objects.filter(stock__lte=0).count()
 
-    new_farmers = Farmer.objects.filter(created_at__gte=since).count()
-    new_orders = Order.objects.filter(created_at__gte=since).count()
-    new_products = Product.objects.filter(created_at__gte=since).count()
+    current_farmers = Farmer.objects.filter(created_at__gte=current_start).count()
+    current_orders = Order.objects.filter(created_at__gte=current_start).count()
+    current_products = Product.objects.filter(created_at__gte=current_start).count()
 
-    # Growth calculations (you can later add % change comparison if needed)
+    previous_farmers = Farmer.objects.filter(created_at__gte=previous_start, created_at__lt=current_start).count()
+    previous_orders = Order.objects.filter(created_at__gte=previous_start, created_at__lt=current_start).count()
+    previous_products = Product.objects.filter(created_at__gte=previous_start, created_at__lt=current_start).count()
+
+    def get_growth(current, previous):
+        if previous == 0:
+            return 100 if current > 0 else 0
+        return round(((current - previous) / previous) * 100, 1)
+
     chart_data = {
         "farmers": [approved_farmers, pending_farmers],
         "products": [
@@ -62,12 +76,14 @@ def dashboard(request):
         "pending_farmers": pending_farmers,
         "total_orders": total_orders,
         "out_of_stock": out_of_stock,
-        "new_farmers": new_farmers,
-        "new_orders": new_orders,
-        "new_products": new_products,
+        "new_farmers": current_farmers,
+        "new_orders": current_orders,
+        "new_products": current_products,
+        "growth_farmers": get_growth(current_farmers, previous_farmers),
+        "growth_orders": get_growth(current_orders, previous_orders),
+        "growth_products": get_growth(current_products, previous_products),
         "chart_data": chart_data,
     })
-
 
 # =============================
 # FARMER VIEWS
