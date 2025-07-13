@@ -11,27 +11,6 @@ from django.db.models import Count, Sum, Q
 from store.models import Farmer, Product, Order
 
 
-def admin_login(request):
-    if request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password")
-        user = authenticate(request, username=username, password=password)
-        if user is not None and user.is_staff:
-            login(request, user)
-            return redirect("admin_dashboard")
-        else:
-            messages.error(request, "Invalid credentials or not an admin user.")
-    return render(request, "adminpanel/login.html")
-
-
-@login_required
-def admin_logout(request):
-    logout(request)
-    return redirect("admin_login")
-
-
-
-
 def get_range_bounds(ranges):
     now = timezone.now()
     if ranges == "week":
@@ -265,3 +244,21 @@ def export_farmers_csv(request):
     for farmer in Farmer.objects.all():
         writer.writerow([farmer.name, farmer.phone_number, farmer.location, farmer.is_approved])
     return response
+
+def admin_login(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        user = authenticate(request, username=username, password=password)
+        if user is not None and user.is_staff:
+            login(request, user)
+            return redirect("admin_dashboard")
+        else:
+            messages.error(request, "Invalid credentials or not an admin user.")
+    return render(request, "adminpanel/login.html")
+
+
+@login_required
+def admin_logout(request):
+    logout(request)
+    return redirect("admin_login")

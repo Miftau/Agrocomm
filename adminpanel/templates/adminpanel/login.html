@@ -1,47 +1,118 @@
-{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Admin Login - Agrocomm</title>
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .login-box {
-            max-width: 400px;
-            margin: 80px auto;
-            padding: 30px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Admin Login - Agrocomm</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(160deg, #e44fc1, #3d3dd8);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-card {
+      background: #fff;
+      padding: 40px 30px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .login-card h3 {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 30px;
+    }
+
+    .login-card input {
+      height: 45px;
+    }
+
+    .btn-login {
+      background-color: #e44fc1;
+      color: white;
+      font-weight: bold;
+      border: none;
+    }
+
+    .btn-login:hover {
+      background-color: #d43fb5;
+    }
+
+    .or-line {
+      text-align: center;
+      margin: 20px 0;
+      color: #888;
+    }
+
+    .text-small {
+      font-size: 14px;
+      text-align: center;
+      color: #777;
+    }
+
+    .text-small a {
+      color: #e44fc1;
+      text-decoration: none;
+    }
+
+    @media (max-width: 576px) {
+      .login-card {
+        padding: 30px 20px;
+      }
+
+      .login-card h3 {
+        font-size: 24px;
+      }
+
+      .btn,
+      input {
+        font-size: 15px !important;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="login-box">
-    <h4 class="mb-4">Admin Login</h4>
+  <div class="login-card">
+    <h3>LOGIN</h3>
 
     {% if messages %}
       {% for message in messages %}
-        <div class="alert alert-danger">{{ message }}</div>
+        <div class="alert alert-danger text-center">{{ message }}</div>
       {% endfor %}
     {% endif %}
 
     <form method="post">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label>Username</label>
-            <input type="text" name="username" class="form-control" required>
-        </div>
-
-        <div class="mb-3">
-            <label>Password</label>
-            <input type="password" name="password" class="form-control" required>
-        </div>
-
-        <button type="submit" class="btn btn-success w-100">Login</button>
+      {% csrf_token %}
+      <div class="mb-3">
+        <input type="text" name="username" class="form-control" placeholder="Email" required>
+      </div>
+      <div class="mb-3">
+        <input type="password" name="password" class="form-control" placeholder="Password" required>
+      </div>
+      <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="remember">
+        <label class="form-check-label" for="remember">Remember me</label>
+      </div>
+      <button type="submit" class="btn btn-login w-100">LOGIN</button>
     </form>
-</div>
+
+    <div class="or-line">Or login with</div>
+
+    <div class="d-flex justify-content-center gap-2 mb-3">
+      <button class="btn btn-outline-secondary w-50">Facebook</button>
+      <button class="btn btn-outline-secondary w-50">Google</button>
+    </div>
+
+    <p class="text-small">Not a member? <a href="#">Sign up now</a></p>
+  </div>
 </body>
 </html>
