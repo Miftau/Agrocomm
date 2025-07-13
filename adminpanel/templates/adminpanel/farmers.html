@@ -1,10 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "adminpanel/base.html" %}
+{% block content %}
+<h3>👩‍🌾 Farmers</h3>
+
+<form method="get" class="row g-2 mb-3">
+  <div class="col-md-6">
+    <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Search by name">
+  </div>
+  <div class="col-md-3">
+    <button type="submit" class="btn btn-primary">Search</button>
+    <a href="{% url 'farmer_list' %}" class="btn btn-secondary">Reset</a>
+  </div>
+</form>
+
+<a href="{% url 'export_farmers_csv' %}" class="btn btn-sm btn-outline-success mb-3">⬇ Export Farmers (CSV)</a>
+<table class="table table-bordered table-striped">
+  <thead>
+    <tr><th>Name</th><th>Phone</th><th>Location</th><th>Status</th><th>Action</th></tr>
+  </thead>
+  <tbody>
+    {% for farmer in farmers %}
+      <tr>
+        <td>{{ farmer.name }}</td>
+        <td>{{ farmer.phone_number }}</td>
+        <td>{{ farmer.location }}</td>
+        <td>{{ farmer.is_approved|yesno:"✅,⏳" }}</td>
+        <td>
+          {% if not farmer.is_approved %}
+            <a href="{% url 'approve_farmer' farmer.id %}" class="btn btn-sm btn-success">Approve</a>
+          {% endif %}
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="5" class="text-center">No farmers found.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

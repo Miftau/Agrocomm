@@ -1,10 +1,90 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "adminpanel/base.html" %}
+{% block content %}
+<h2>📊 Admin Dashboard</h2>
+
+<div class="row mt-4">
+  <div class="col-md-3">
+    <div class="card text-bg-success mb-3">
+      <div class="card-body">
+        <h5>Farmers Approved</h5>
+        <p class="h3">{{ approved_farmers }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-bg-warning mb-3">
+      <div class="card-body">
+        <h5>Pending Farmers</h5>
+        <p class="h3">{{ pending_farmers }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-bg-primary mb-3">
+      <div class="card-body">
+        <h5>Orders</h5>
+        <p class="h3">{{ total_orders }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-bg-danger mb-3">
+      <div class="card-body">
+        <h5>Out of Stock</h5>
+        <p class="h3">{{ out_of_stock }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-4">
+  <div class="col-md-6">
+    <canvas id="farmerChart"></canvas>
+  </div>
+  <div class="col-md-6">
+    <canvas id="productChart"></canvas>
+  </div>
+  <div class="col-md-6 mt-4">
+    <canvas id="orderChart"></canvas>
+  </div>
+  <div class="col-md-6 mt-4">
+    <canvas id="paymentChart"></canvas>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const data = {{ chart_data|safe }};
+
+new Chart(document.getElementById('farmerChart'), {
+  type: 'pie',
+  data: { labels: ['Approved', 'Pending'], datasets: [{ data: data.farmers, backgroundColor: ['green', 'orange'] }] }
+});
+
+new Chart(document.getElementById('productChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Approved', 'Pending', 'Out of Stock'],
+    datasets: [{ data: data.products, backgroundColor: ['blue', 'yellow', 'red'] }]
+  }
+});
+
+new Chart(document.getElementById('orderChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Pending', 'Delivered', 'Cancelled'],
+    datasets: [{ data: data.orders, backgroundColor: ['orange', 'green', 'red'] }]
+  }
+});
+
+new Chart(document.getElementById('paymentChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Paystack', 'Bank Transfer', 'Pay on Delivery'],
+    datasets: [{ data: data.payments, backgroundColor: ['cyan', 'purple', 'gray'] }]
+  }
+});
+</script>
+{% endblock %}

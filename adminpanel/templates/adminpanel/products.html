@@ -1,10 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "adminpanel/base.html" %}
+{% block content %}
+<h3>🛒 Products</h3>
+
+<form method="get" class="row g-2 mb-3">
+  <div class="col-md-4">
+    <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Search by name">
+  </div>
+  <div class="col-md-4">
+    <select name="status" class="form-select">
+      <option value="">-- Filter Status --</option>
+      <option value="approved" {% if status =="approved" %}selected{% endif %}>Approved</option>
+      <option value="pending" {% if status =="pending" %}selected{% endif %}>Pending</option>
+      <option value="outofstock" {% if status =="outofstock" %}selected{% endif %}>Out of Stock</option>
+    </select>
+  </div>
+  <div class="col-md-4">
+    <button type="submit" class="btn btn-primary">Filter</button>
+    <a href="{% url 'product_list' %}" class="btn btn-secondary">Reset</a>
+  </div>
+</form>
+
+<a href="{% url 'export_products_csv' %}" class="btn btn-sm btn-outline-success mb-3">⬇ Export Products (CSV)</a>
+<table class="table table-bordered table-hover">
+  <thead>
+    <tr><th>Name</th><th>Farmer</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr>
+  </thead>
+  <tbody>
+    {% for product in products %}
+      <tr>
+        <td>{{ product.name }}</td>
+        <td>{{ product.farmer.name }}</td>
+        <td>₦{{ product.price }}</td>
+        <td>{{ product.stock }}</td>
+        <td>{{ product.is_approved|yesno:"✅,⏳" }}</td>
+        <td>
+          {% if not product.is_approved %}
+            <a href="{% url 'approve_product' product.id %}" class="btn btn-success btn-sm">Approve</a>
+          {% endif %}
+          <a href="{% url 'delete_product' product.id %}" class="btn btn-danger btn-sm">Delete</a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6" class="text-center">No products found.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -186,11 +186,24 @@ def ussd_callback(request):
                 name = inputs[1]
                 price = float(inputs[2])
                 quantity = int(inputs[3])
-                category = list(Category.objects.all())[int(inputs[4]) - 1]
-                Product.objects.create(name=name, price=price, stock=quantity, category=category, farmer=farmer, is_approved=False)
-                response = "END Produce submitted. Await approval."
-            except:
-                response = "END Failed to add produce."
+                category_index = int(inputs[4]) - 1
+                category = list(Category.objects.all())[category_index]
+
+                Product.objects.create(
+                    name=name,
+                    price=price,
+                    stock=quantity,
+                    category=category,
+                    farmer=farmer,
+                    is_approved=False
+                )
+                response = "END Product added. Await admin approval."
+            except (IndexError, ValueError) as e:
+                response = "END Invalid input values."
+            except Exception as e:
+                print("USSD Add Produce Error:", str(e))  # Optional: log to file
+                response = "END Failed to add product. Please try again."
+
 
     # MY ORDERS + TRACKING
     elif inputs[0] == "5":

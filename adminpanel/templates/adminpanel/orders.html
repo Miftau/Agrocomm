@@ -1,10 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "adminpanel/base.html" %}
+{% block content %}
+<h3>📦 Orders</h3>
+
+<form method="get" class="row g-2 mb-3">
+  <div class="col-md-4">
+    <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Search by Order ID">
+  </div>
+  <div class="col-md-4">
+    <select name="status" class="form-select">
+      <option value="">-- Filter by Status --</option>
+      <option value="Pending" {% if status =="Pending" %}selected{% endif %}>Pending</option>
+      <option value="Delivered" {% if status =="Delivered" %}selected{% endif %}>Delivered</option>
+      <option value="Cancelled" {% if status =="Cancelled" %}selected{% endif %}>Cancelled</option>
+    </select>
+  </div>
+  <div class="col-md-4">
+    <button type="submit" class="btn btn-primary">Apply</button>
+    <a href="{% url 'order_list' %}" class="btn btn-secondary">Reset</a>
+  </div>
+</form>
+
+<a href="{% url 'export_orders_csv' %}" class="btn btn-sm btn-outline-success mb-3">⬇ Export Orders (CSV)</a>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Order ID</th><th>Customer</th><th>Phone</th><th>Status</th><th>Payment</th><th>Amount</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for order in orders %}
+      <tr>
+        <td>{{ order.id }}</td>
+        <td>{{ order.customer_name }}</td>
+        <td>{{ order.customer_phone }}</td>
+        <td>{{ order.status }}</td>
+        <td>{{ order.payment_method }}</td>
+        <td>₦{{ order.total_amount }}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6" class="text-center">No orders yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

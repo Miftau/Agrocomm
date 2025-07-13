@@ -1,10 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "adminpanel/base.html" %}
+{% block content %}
+<h3>📥 Upload Product CSV</h3>
+
+{% if messages %}
+  {% for msg in messages %}
+    <div class="alert alert-{{ msg.tags }}">{{ msg }}</div>
+  {% endfor %}
+{% endif %}
+
+<form method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="mb-3">
+    <label class="form-label">CSV File</label>
+    <input type="file" name="csv_file" class="form-control" required accept=".csv">
+  </div>
+  <button type="submit" class="btn btn-primary">Upload</button>
+</form>
+
+<p class="mt-4"><strong>Format Example:</strong></p>
+<pre>
+name,description,price,stock,farmer_phone,is_approved
+Tomatoes,Fresh and ripe,500,20,08012345678,True
+</pre>
+
+<a href="{% url 'product_list' %}" class="btn btn-secondary mt-3">← Back to Products</a>
+{% endblock %}
