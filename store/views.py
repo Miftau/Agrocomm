@@ -1,8 +1,8 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from .models import Farmer, Product, CartItem, Order, OrderItem, Category
-from agrocomm.store.utils.paystack import initialize_payment
-from agrocomm.store.utils.sms import send_sms
+from store.utils.paystack import initialize_payment
+from store.utils.sms import send_sms
 import json
 
 @csrf_exempt
