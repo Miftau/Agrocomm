@@ -3,7 +3,7 @@ services:
     name: agrocomm
     env: python
     buildCommand: "./manage.py collectstatic --noinput"
-    startCommand: "gunicorn Agrocomm.wsgi"
+    startCommand: "gunicorn agrocomm.wsgi"
     envVars:
       - key: DEBUG
         value: false
