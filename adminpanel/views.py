@@ -28,7 +28,7 @@ def get_range_bounds(ranges):
 # ADMIN DASHBOARD OVERVIEW
 # =============================
 @login_required
-def dashboard(request):
+def admin_dashboard(request):
     ranges = request.GET.get("range", "day")
     current_start, previous_start = get_range_bounds(ranges)
 

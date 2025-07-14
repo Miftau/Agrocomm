@@ -4,7 +4,7 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     # Admin dashboard
-    path('', views.dashboard, name='admin_dashboard'),
+    path('', views.admin_dashboard, name='admin_dashboard'),
 
     # Authentication
     path('login/', views.admin_login, name='admin_login'),
