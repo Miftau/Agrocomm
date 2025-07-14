@@ -71,7 +71,7 @@ def admin_dashboard(request):
     }
 
     return render(request, "adminpanel/dashboard.html", {
-        "range": range,
+        "ranges": ranges,
         "approved_farmers": approved_farmers,
         "pending_farmers": pending_farmers,
         "total_orders": total_orders,
