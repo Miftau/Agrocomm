@@ -7,6 +7,9 @@ from django.views.generic.dates import timezone_today
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
+
+    verbose_name_plural = 'Categories'
 
     def __str__(self):
         return self.name
