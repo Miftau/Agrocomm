@@ -5,3 +5,4 @@ requests
 whitenoise
 dj-database-url
 africastalking
+psycopg2
