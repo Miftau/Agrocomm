@@ -6,3 +6,4 @@ whitenoise
 dj-database-url
 africastalking
 psycopg2
+python-dotenv
