@@ -26,7 +26,6 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ["category", "is_approved"]
     search_fields = ["name"]
 
-    change_list_template = "admin/product_changelist.html"
 
     def get_urls(self):
         from django.urls import path
